@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdelrahman Elnakesh | Data Analytics & A.I.</title>
+    <link rel="icon" type="image/png" href="/data.png">
+    <!-- Tailwind for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Inter & Playfair -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rru-blue: #002D56;
+            --rru-gold: #C5A147;
+            --rru-light: #F4F7F9;
+            --baby-blue: #E0F2FE;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: var(--rru-light);
+            color: #1a202c;
+        }
+        .serif-font { font-family: 'Playfair Display', serif; }
+        .mono-font { font-family: 'Fira Code', monospace; }
+        .bg-rru-blue { background-color: var(--rru-blue); }
+        .text-rru-blue { color: var(--rru-blue); }
+        .text-rru-gold { color: var(--rru-gold); }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #002D56 0%, #004a8d 100%);
+        }
+        
+        .floating-nav {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .floating-nav:hover {
+            transform: scale(1.05);
+        }
+
+        .menu-btn {
+            width: 56px;
+            height: 56px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 45, 86, 0.05);
+        }
+
+        .menu-btn.on-dark { background: white; }
+        .menu-btn.on-dark span { background: var(--rru-blue); }
+        .menu-btn.on-light { background: var(--rru-blue); }
+        .menu-btn.on-light span { background: white; }
+
+        .menu-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            transition: all 0.3s ease;
+        }
+
+        #menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--rru-blue);
+            z-index: 200;
+            clip-path: circle(0% at 90% 10%);
+            transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+        #menu-overlay.active {
+            clip-path: circle(150% at 90% 10%);
+        }
+
+        .nav-item { overflow: hidden; display: block; }
+        .nav-item a {
+            display: block;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        #menu-overlay.active .nav-item a { transform: translateY(0); }
+
+        .nav-scroll-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(197, 161, 71, 0.3) transparent;
+        }
+        .nav-scroll-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .nav-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .nav-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(197, 161, 71, 0.3);
+            border-radius: 2px;
+        }
+        .nav-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(197, 161, 71, 0.5);
+        }
+
+        .overlay-bg-text {
+            position: absolute;
+            font-size: 20vw;
+            bottom: -5vw;
+            right: -2vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            line-height: 0.8;
+            user-select: none;
+        }
+
+        .code-window {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating { animation: float 6s ease-in-out infinite; }
+
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(15px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+
+        .bg-grid-dots {
+            background-image: radial-gradient(var(--rru-blue) 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+
+        .pulse-point { position: relative; }
+        .pulse-point::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background: currentColor;
+            opacity: 0.3;
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .competency-card { transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        .competency-card:hover {
+            background-color: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+        }
+
+        /* Awards Section Custom Design */
+        .award-banner {
+            background: linear-gradient(90deg, var(--rru-blue) 0%, #004a8d 100%);
+            border-radius: 2.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .gold-border-gradient {
+            border: 1px solid;
+            border-image: linear-gradient(135deg, #C5A147, transparent, #C5A147) 1;
+        }
+        .glass-sidebar {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-badge {
+            background: rgba(197, 161, 71, 0.15);
+            border: 1px solid rgba(197, 161, 71, 0.3);
+            color: var(--rru-gold);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Floating Navigation Trigger -->
+    <div class="floating-nav">
+        <div class="menu-btn on-dark" id="open-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Fullscreen Overlay Menu -->
+    <div id="menu-overlay">
+        <div class="overlay-bg-text serif-font uppercase">Nakesh</div>
+        
+        <div class="p-10 flex justify-between items-center relative z-10">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-rru-gold rounded-xl flex items-center justify-center text-white font-bold text-2xl">A</div>
+                <div class="flex flex-col text-white">
+                    <span class="text-lg font-bold tracking-tight leading-none">Abdelrahman</span>
+                    <span class="text-xs uppercase tracking-[0.2em] text-rru-gold font-semibold">Elnakesh</span>
+                </div>
+            </div>
+            <button id="close-menu" class="group flex items-center space-x-2 text-white/60 hover:text-white transition-colors">
+                <span class="uppercase tracking-widest text-xs font-bold">Close Menu</span>
+                <div class="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-rru-blue transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </div>
+            </button>
+        </div>
+
+        <div class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full px-10 items-center justify-center md:justify-between relative z-10">
+            <div class="nav-scroll-container">
+                <div class="space-y-4 md:space-y-6 text-center md:text-left">
+                    <div class="nav-item"><a href="#home" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Home</a></div>
+                    <div class="nav-item"><a href="#education" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Education</a></div>
+                    <div class="nav-item"><a href="#awards" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Awards</a></div>
+                    <div class="nav-item"><a href="#projects" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Projects</a></div>
+                    <div class="nav-item"><a href="#capstone" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Capstones</a></div>
+                    <div class="nav-item"><a href="#leadership" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Leadership</a></div>
+                    <div class="nav-item"><a href="#courses" class="text-5xl md:text-7xl serif-font hover:text-rru-gold transition-colors">Courses</a></div>
+                </div>
+            </div>
+
+            <div class="mt-16 md:mt-0 flex flex-col items-center md:items-end space-y-8">
+                <div class="text-center md:text-right">
+                    <p class="text-rru-gold uppercase tracking-widest text-xs font-bold mb-2">Get in touch</p>
+                    <a href="mailto:abdelrahmanelnakesh@gmail.com" class="text-xl md:text-2xl hover:underline underline-offset-8">abdelrahmanelnakesh@gmail.com</a>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-rru-gold hover:border-rru-gold transition-all"><i data-lucide="github"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-rru-gold hover:border-rru-gold transition-all"><i data-lucide="linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-white/40">
+            <span>© 2026 Abdelrahman Elnakesh</span>
+            <span>Based in Cairo, Egypt</span>
+            <span>Data Analytics & Artificial Intelligence</span>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen lg:h-screen flex items-center pt-20 pb-16 px-6 hero-gradient text-white overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-12 transform origin-top-right"></div>
+        <div class="w-64 h-64 md:w-96 md:h-96 bg-rru-gold rounded-full blur-[120px] absolute -bottom-20 -left-20 opacity-20"></div>
+
+        <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-6 text-left">
+                <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-[9px] font-bold tracking-widest uppercase">
+                    <span>Future BBA Student @ RRU RAK</span>
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl lg:text-6xl serif-font leading-tight">
+                    <span class="block">Shaping the Future</span>
+                    <span class="block">Through <span class="text-rru-gold">Data & A.I.</span></span>
+                </h1>
+                
+                <p class="text-base md:text-lg text-blue-100 max-w-lg leading-relaxed font-light">
+                    High school senior at Sharkya STEM School, passionate about leveraging artificial intelligence to solve real-world problems. Incoming Data Analytics student at Royal Roads University.
+                </p>
+            </div>
+
+            <div class="hidden md:block">
+                <div class="code-window p-6 mono-font text-xs lg:text-sm floating max-w-md mx-auto">
+                    <div class="flex space-x-2 mb-4">
+                        <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <p><span class="text-pink-400">class</span> <span class="text-yellow-300">Innovator</span> {</p>
+                        <p class="ml-6"><span class="text-blue-300">location</span> = <span class="text-green-300">"Egypt → RAK"</span>;</p>
+                        <p class="ml-6"><span class="text-blue-300">focus</span> = [<span class="text-green-300">"AI"</span>, <span class="text-green-300">"Data"</span>];</p>
+                        <p class="ml-6"><span class="text-blue-300">status</span> = <span class="text-green-300">"Ready to lead"</span>;</p>
+                        <p>}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a id="db-scroll-trigger" href="#education" class="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden lg:flex flex-col items-center group transition-all duration-300 hover:scale-110">
+            <div class="animate-bounce-slow text-rru-gold/60 group-hover:text-rru-gold text-center">
+                <p class="text-[10px] uppercase font-bold tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Explore</p>
+                <i data-lucide="database" class="w-6 h-6 mx-auto"></i>
+                <i data-lucide="chevron-down" class="w-4 h-4 mx-auto -mt-1"></i>
+            </div>
+        </a>
+    </section>
+
+    <!-- Education Journey -->
+    <section id="education" class="pt-24 pb-16 px-6 bg-white relative z-20">
+        <div class="absolute inset-0 bg-grid-dots pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-rru-gold uppercase tracking-[0.4em] text-xs font-bold mb-4">The Evolution</h2>
+                <h3 class="text-5xl md:text-6xl serif-font text-rru-blue">Past & Future</h3>
+                <div class="w-24 h-1 bg-rru-gold mx-auto mt-6 opacity-30"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-0 items-stretch relative">
+                <div class="relative z-10 lg:pr-12 group">
+                    <div class="bg-blue-50 p-8 md:p-12 rounded-[2.5rem] border border-blue-100 transition-all duration-700 hover:bg-white hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden h-full">
+                        <span class="absolute -right-4 -bottom-4 text-[10rem] font-black text-blue-200/40 serif-font select-none group-hover:text-rru-blue/5 transition-colors">01</span>
+                        <div class="flex items-center space-x-4 mb-8 relative z-10">
+                            <div class="pulse-point w-16 h-16 bg-rru-blue rounded-2xl flex items-center justify-center text-white shadow-xl">
+                                <i data-lucide="anchor" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-rru-blue/40">High School Diploma (2023-2026)</span>
+                                <h4 class="text-2xl font-bold text-rru-blue">Sharkya STEM School</h4>
+                            </div>
+                        </div>
+                        <div class="space-y-6 mb-10 relative z-10">
+                            <p class="text-gray-600 leading-relaxed italic border-l-4 border-rru-gold/40 pl-6 py-2">"Built on a foundation of rigorous research and scientific curiosity."</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-10 lg:pl-12 group">
+                    <div class="bg-blue-50 p-8 md:p-12 rounded-[2.5rem] border border-blue-100 transition-all duration-700 hover:bg-white hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden h-full">
+                        <span class="absolute -right-4 -bottom-4 text-[10rem] font-black text-blue-200/40 serif-font select-none group-hover:text-rru-blue/5 transition-colors">02</span>
+                        <div class="flex items-center space-x-4 mb-8 relative z-10">
+                            <div class="pulse-point w-16 h-16 bg-rru-blue rounded-2xl flex items-center justify-center text-white shadow-xl">
+                                <i data-lucide="database" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-rru-blue/40">BBA Data Analytics & A.I. (2026-2029)</span>
+                                <h4 class="text-2xl font-bold text-rru-blue">Royal Roads University</h4>
+                            </div>
+                        </div>
+                        <div class="space-y-6 mb-10 relative z-10">
+                            <p class="text-gray-600 leading-relaxed italic border-l-4 border-rru-gold/40 pl-6 py-2">"Transitioning from theoretical foundations to global industry leadership."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="competency-card p-6 bg-blue-50 rounded-[2rem] border border-blue-100 text-center relative overflow-hidden">
+                    <i data-lucide="bar-chart-3" class="w-8 h-8 text-rru-gold mx-auto mb-4 relative z-10"></i>
+                    <h5 class="text-sm font-bold text-rru-blue uppercase tracking-widest mb-1 relative z-10">Data Visuals</h5>
+                    <p class="text-[10px] text-rru-blue/50 font-semibold relative z-10">Advanced Analytics</p>
+                </div>
+                <div class="competency-card p-6 bg-blue-50 rounded-[2rem] border border-blue-100 text-center relative overflow-hidden">
+                    <i data-lucide="brain-circuit" class="w-8 h-8 text-rru-gold mx-auto mb-4 relative z-10"></i>
+                    <h5 class="text-sm font-bold text-rru-blue uppercase tracking-widest mb-1 relative z-10">Neural Nets</h5>
+                    <p class="text-[10px] text-rru-blue/50 font-semibold relative z-10">AI Logic</p>
+                </div>
+                <div class="competency-card p-6 bg-blue-50 rounded-[2rem] border border-blue-100 text-center relative overflow-hidden">
+                    <i data-lucide="code" class="w-8 h-8 text-rru-gold mx-auto mb-4 relative z-10"></i>
+                    <h5 class="text-sm font-bold text-rru-blue uppercase tracking-widest mb-1 relative z-10">Scripting</h5>
+                    <p class="text-[10px] text-rru-blue/50 font-semibold relative z-10">Python & Beyond</p>
+                </div>
+                <div class="competency-card p-6 bg-blue-50 rounded-[2rem] border border-blue-100 text-center relative overflow-hidden">
+                    <i data-lucide="globe" class="w-8 h-8 text-rru-gold mx-auto mb-4 relative z-10"></i>
+                    <h5 class="text-sm font-bold text-rru-blue uppercase tracking-widest mb-1 relative z-10">Scale</h5>
+                    <p class="text-[10px] text-rru-blue/50 font-semibold relative z-10">Global Perspective</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Honors & Awards -->
+    <section id="awards" class="pt-24 pb-32 px-6 bg-white relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center text-center mb-16">
+                <h2 class="text-rru-gold uppercase tracking-[0.4em] text-xs font-bold mb-4">Competitive Excellence</h2>
+                <h3 class="text-5xl md:text-6xl serif-font text-rru-blue">Prizes & Recognition</h3>
+                <p class="mt-4 text-gray-500 max-w-2xl text-sm leading-relaxed">
+                    Showcasing top-tier achievements in international engineering and software challenges where innovation meets real-world application.
+                </p>
+            </div>
+
+            <div class="space-y-12">
+                <!-- Achievement Spotlight 01: Agro AI -->
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[550px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="leaf" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Agro AI</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    CodeSprout Hackathon
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://devpost.com/software/agro-ai-smart-satellite-guided-crop-planner" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Devpost</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://youtu.be/d9eOgGgEFSE?si=YA6fbC52U_FDhB1o" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-red-500 transition-all">
+                                        <i data-lucide="youtube" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Demo</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Best Overall Project & Best Team Collaboration</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Champion of <span class="text-rru-gold italic serif-font">CodeSprout</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Smart Satellite-Guided Crop Planner designed to optimize agricultural yield using data-driven insights.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Core Impact</p>
+                                                <p class="text-xs">Precision agriculture via satellite data analysis for localized farming solutions.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Architecture</p>
+                                                <p class="text-xs">Seamless integration of remote sensing and machine learning for crop prediction.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="award" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">WIN</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Best Overall</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievement Spotlight 02: HerGuardian -->
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[550px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="shield" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">HerGuardian</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    International Hackathon
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://devpost.com/software/hergarduan" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Devpost</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://youtu.be/AhjWMgSHkA4?si=3D5v7ajX38QQncXh" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-red-500 transition-all">
+                                        <i data-lucide="youtube" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Demo</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Ranked #1 Among International Competitors</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Champion of <span class="text-rru-gold italic serif-font">CVHS Hacks</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Designed an empathetic software ecosystem aimed at revolutionizing safety for women in public spaces.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Core Impact</p>
+                                                <p class="text-xs">Dynamic safety mapping and anonymous crowd-sourced incident reporting.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Architecture</p>
+                                                <p class="text-xs">Prioritizing user privacy while maintaining high-accuracy tracking data.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="trophy" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">1st</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Place Overall</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievement Spotlight 03: Ramadan Knowledge Cup -->
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[550px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="moon" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4 text-white">The Nerds</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Ramadan Knowledge Cup
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex items-center space-x-3 group cursor-default">
+                                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                        <i data-lucide="users" class="w-4 h-4 text-rru-gold"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Team of 5</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group cursor-default">
+                                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                        <i data-lucide="user-check" class="w-4 h-4 text-rru-gold"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Team Leader</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Sharkya STEM School Internal Challenge</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">1st Place <span class="text-rru-gold italic serif-font">Knowledge Cup</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Spearheaded "The Nerds" to victory in a high-stakes general knowledge competition during Ramadan, managing a 5-member squad through intense knockout rounds.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Focus Areas</p>
+                                                <p class="text-xs">Science, Technology, Engineering, and Mathematics (STEM).</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Leadership</p>
+                                                <p class="text-xs">Strategic coordination and quick decision-making under time constraints.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="crown" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">1st</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Champions</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </section>
+
+    <!-- Projects Showcase -->
+    <section id="projects" class="pt-12 pb-32 px-6 bg-white relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center text-center mb-16">
+                <h2 class="text-rru-gold uppercase tracking-[0.4em] text-xs font-bold mb-4">Innovation Portfolio</h2>
+                <h3 class="text-5xl md:text-6xl serif-font text-rru-blue">Featured Projects</h3>
+                <p class="mt-4 text-gray-500 max-w-2xl text-sm leading-relaxed">
+                    A collection of personal projects showcasing technical skills, problem-solving abilities, and passion for technology.
+                </p>
+            </div>
+
+            <div>
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[480px]">
+                        <div class="lg:w-1/4 glass-sidebar p-8 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+                                    <i data-lucide="monitor" class="w-7 h-7 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Sharkya STEM School Website</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    School Website
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://www.sharkyastemschool.org" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                        <i data-lucide="globe" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Website</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">HTML</span>
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">CSS</span>
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">JavaScript</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-8 lg:p-12 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-10">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">School website launch & analytics</span>
+                                        <h5 class="text-3xl md:text-4xl font-bold tracking-tight">Official Sharkya STEM School site with <span class="text-rru-gold italic serif-font">map integration</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Built the school’s first official website using HTML, CSS and JavaScript, integrating Google Site Maps and a backend data system for tracking impressions and records.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Impact</p>
+                                                <p class="text-xs">Coded 3k+ lines, managed 10k+ impressions, and organized 250+ records.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Scale</p>
+                                                <p class="text-xs">Published 192 files across 6 folders, totaling 230 MB on Hostinger.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-36 h-36 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="server" class="w-10 h-10 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-2xl font-black serif-font relative z-10">230</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">MB</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl relative">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[480px]">
+                        <div class="lg:w-1/4 glass-sidebar p-8 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+                                    <i data-lucide="heart-pulse" class="w-7 h-7 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">AfriCare</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Multilingual Health AI
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://devpost.com/software/africare" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Devpost</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://youtu.be/WpY7DPC9acs?si=I92uZ7ECXRSk4J5e" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-red-500 transition-all">
+                                        <i data-lucide="youtube" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Demo</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">Arabic</span>
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">English</span>
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">French</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-8 lg:p-12 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-10">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Inclusive health access for underserved communities</span>
+                                        <h5 class="text-3xl md:text-4xl font-bold tracking-tight">AI-driven health companion for <span class="text-rru-gold italic serif-font">language-diverse</span> communities</h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">AfriCare provides symptom insights, telemedicine, and multilingual record management to make care accessible even when internet connectivity is minimal.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Key Value</p>
+                                                <p class="text-xs">Bridges language gaps with Arabic, English, and French support—boosting trust and adoption.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Tech Stack</p>
+                                                <p class="text-xs">Powered by React frontend, Python backend, and cloud-native deployment for scalability.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-36 h-36 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="globe" class="w-10 h-10 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-2xl font-black serif-font relative z-10">3</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Languages</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl relative">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[480px]">
+                        <div class="lg:w-1/4 glass-sidebar p-8 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+                                    <i data-lucide="sparkles" class="w-7 h-7 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Personality-Aware Ent.</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Extension + Chatbot
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://devpost.com/software/personality-aware-entertainment" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Devpost</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://youtu.be/DztbmB7ZKQg?si=jQ45wHR7cNCJbLSI" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-red-500 transition-all">
+                                        <i data-lucide="youtube" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Demo</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">Chrome</span>
+                                    <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] uppercase tracking-widest">Chatbot</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-8 lg:p-12 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-10">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">A smarter way to explore content</span>
+                                        <h5 class="text-3xl md:text-4xl font-bold tracking-tight">A browser extension that tailors recommendations based on <span class="text-rru-gold italic serif-font">personality</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Personality-Aware Ent. reduces choice overload by offering entertainment suggestions aligned with mood and individual preferences, all inside your browser.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">User Value</p>
+                                                <p class="text-xs">Helps users discover engaging content without scrolling endlessly.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Core Tech</p>
+                                                <p class="text-xs">Built with web extensions, chatbot AI, and adaptive recommendation logic.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-36 h-36 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="sparkles" class="w-10 h-10 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-2xl font-black serif-font relative z-10">+1</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Extension</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capstone Projects -->
+    <section id="capstone" class="pt-16 pb-32 px-6 bg-white relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center text-center mb-16">
+                <h2 class="text-rru-gold uppercase tracking-[0.4em] text-xs font-bold mb-4">Capstone Portfolio</h2>
+                <h3 class="text-5xl md:text-6xl serif-font text-rru-blue">High School Capstone Projects</h3>
+                <p class="mt-4 text-gray-500 max-w-2xl text-sm leading-relaxed">
+                    A showcase of my capstone work from high school, including project summaries, outcomes, and poster artifacts. Click the posters to view the full project deliverables.
+                </p>
+            </div>
+
+            <div class="award-banner text-white shadow-2xl">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                <div class="flex flex-col lg:flex-row min-h-[520px]">
+                    <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                        <div>
+                            <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                <i data-lucide="box" class="w-8 h-8 text-rru-gold"></i>
+                            </div>
+                            <h4 class="text-3xl serif-font leading-tight mb-4">The Massive Gravity Dam</h4>
+                            <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                Grade 10 | Semester 1
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <p class="text-[10px] text-white/40 leading-relaxed">
+                                Click below to open the full poster. If you want to include the poster as a permanent part of the site, you can place the PDF in the project folder and update the link.
+                            </p>
+                            <a href="/Capstone/22114..pdf" target="_blank" class="inline-flex items-center justify-center px-5 py-3 bg-rru-blue rounded-full text-sm font-semibold hover:bg-rru-gold transition">
+                                <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                View Poster
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                        <div class="grid lg:grid-cols-5 gap-12">
+                            <div class="lg:col-span-3 space-y-6">
+                                <div class="space-y-2">
+                                    <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">A practical exploration of problem-solving & design</span>
+                                    <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Poster: <span class="text-rru-gold italic serif-font">Project Overview + Results</span></h5>
+                                </div>
+                                <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                    <p class="text-lg">Designed and constructed a gravity dam prototype capable of storing 50+ liters of water while withstanding over 10 kg of weight, using locally sourced materials and a custom concrete mold.</p>
+                                    <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                        <div>
+                                            <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Key Objectives</p>
+                                            <p class="text-xs">Design a durable gravity dam, model it with a metallic maquette, and test structural performance under load.</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Materials & Method</p>
+                                            <p class="text-xs">Used cement, gallstone, and iron rods with fixing bonds, and built a wooden mold to pour the concrete.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                <div class="relative mb-8">
+                                    <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                        <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                        <i data-lucide="droplet" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                        <span class="text-3xl font-black serif-font relative z-10">50+</span>
+                                        <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Liters</span>
+                                    </div>
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="zap" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Blue Energy Generator</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Grade 10 | Semester 2
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Click below to open the full poster. The project focuses on sustainable energy generation using simple materials and experimental measurements.
+                                </p>
+                                <a href="/Capstone/Poster 22114. Final.pdf" target="_blank" class="inline-flex items-center justify-center px-5 py-3 bg-rru-blue rounded-full text-sm font-semibold hover:bg-rru-gold transition">
+                                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                    View Poster
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Using hydroelectric principles for low-cost energy</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Prototype generator with <span class="text-rru-gold italic serif-font">measurable output</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Built a small hydroelectric generator using a DC motor, plastic tubing, and a battery system to store energy, targeting sustainable power for rural areas.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Approach</p>
+                                                <p class="text-xs">Used a DC motor, plastic tubes, and batteries to capture and store energy from flowing water.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Results</p>
+                                                <p class="text-xs">Generated 156.57 Joules, 6.14 Volts, and 0.085 amperes, meeting the design requirements.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="battery" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">156</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Joules</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="filter" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">The Fabric Filter</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Grade 11 | Semester 1
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Click below to open the full poster. This project focuses on reducing air pollution with a two-stage filtration system and sensor-based monitoring.
+                                </p>
+                                <a href="/Capstone/poster 22214. Final.pdf" target="_blank" class="inline-flex items-center justify-center px-5 py-3 bg-rru-blue rounded-full text-sm font-semibold hover:bg-rru-gold transition">
+                                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                    View Poster
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Reducing pollution with smart filtration</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Two-stage air filter with <span class="text-rru-gold italic serif-font">sensor feedback</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Developed a fabric-based air filtration unit with a built-in MQ-135 sensor and Arduino controller to measure and reduce airborne pollutants.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Method</p>
+                                                <p class="text-xs">Used Arduino Uno + MQ-135 to monitor air quality while filtering via two-stage fabric layers.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Results</p>
+                                                <p class="text-xs">Filtered 51.7% of pollutants in 7 minutes during testing, meeting the project goals.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="wind" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">51.7</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">% Cleaner</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="droplet" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Eco Cycle: Wastewater Filtration</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Grade 11 | Semester 2
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Click below to open the full poster. This project demonstrates a multi-stage filtration system for factory wastewater with sensor-driven performance tracking.
+                                </p>
+                                <a href="/Capstone/Poster_22213.pdf" target="_blank" class="inline-flex items-center justify-center px-5 py-3 bg-rru-blue rounded-full text-sm font-semibold hover:bg-rru-gold transition">
+                                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                    View Poster
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">A sustainable approach to industrial wastewater</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Three-stage filtration with <span class="text-rru-gold italic serif-font">sensor validation</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Developed a fabric-based, chemical-stage filtration system using Arduino sensors (pH, TDS, turbidity) to monitor and improve water quality.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Approach</p>
+                                                <p class="text-xs">Built a three-stage filtration system (physical + chemical + chemical) with integrated sensors to monitor pH, TDS, and turbidity in real time.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Results</p>
+                                                <p class="text-xs">Achieved 51.7% pollutant reduction in 7 minutes, validated by sensor readings and lab testing.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="layers" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">3</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Stages</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="camera" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">FlowGuard: Smart Traffic Camera</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Grade 12
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Click below to open the full poster. This capstone showcases an AI-based traffic management prototype using ESP32 cameras and wireless control.
+                                </p>
+                                <a href="/Capstone/Poster 22318.pdf" target="_blank" class="inline-flex items-center justify-center px-5 py-3 bg-rru-blue rounded-full text-sm font-semibold hover:bg-rru-gold transition">
+                                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                    View Poster
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">AI-powered traffic flow detection</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Smart camera management with <span class="text-rru-gold italic serif-font">ESP-NOW networking</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Built a traffic management system using an ESP32-CAM and ESP32 board set to communicate via ESP-NOW, controlling signals based on live object detection.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Tech Stack</p>
+                                                <p class="text-xs">ESP32-CAM, ESP32 Dev Board, LCD I2C, and YOLO-based object detection.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Performance</p>
+                                                <p class="text-xs">Trained on 343 images and achieved 98.3% detection accuracy for cars and emergency vehicles.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="cpu" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">98.3</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">% Accurate</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership & Initiatives -->
+    <section id="leadership" class="pt-16 pb-32 px-6 bg-white relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center text-center mb-16">
+                <h2 class="text-rru-gold uppercase tracking-[0.4em] text-xs font-bold mb-4">Leadership Portfolio</h2>
+                <h3 class="text-5xl md:text-6xl serif-font text-rru-blue">Initiatives & Impact</h3>
+                <p class="mt-4 text-gray-500 max-w-2xl text-sm leading-relaxed">
+                    Leadership activities where I built community, designed learning experiences, and drove hands-on STEM engagement.
+                </p>
+            </div>
+
+            <div class="award-banner text-white shadow-2xl">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                <div class="flex flex-col lg:flex-row min-h-[520px]">
+                    <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                        <div>
+                            <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                <i data-lucide="users" class="w-8 h-8 text-rru-gold"></i>
+                            </div>
+                            <h4 class="text-3xl serif-font leading-tight mb-4">Tiny Techies Initiative</h4>
+                            <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                Programming + Robotics
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <p class="text-[10px] text-white/40 leading-relaxed">
+                                Founder & presenter of a kindergarten STEM program focused on programming and robotics education.
+                            </p>
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-3 group cursor-default">
+                                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                        <i data-lucide="book-open" class="w-4 h-4 text-rru-gold"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">5 classes taught</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group cursor-default">
+                                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                        <i data-lucide="users" class="w-4 h-4 text-rru-gold"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">200 students</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group cursor-default">
+                                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                        <i data-lucide="package" class="w-4 h-4 text-rru-gold"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">10 projects designed</span>
+                                </div>
+                                <div class="flex items-center space-x-3 group">
+                                    <a href="https://www.linkedin.com/company/tiny-techies" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                        <i data-lucide="linkedin" class="w-4 h-4"></i>
+                                    </a>
+                                    <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">LinkedIn</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                        <div class="grid lg:grid-cols-5 gap-12">
+                            <div class="lg:col-span-3 space-y-6">
+                                <div class="space-y-2">
+                                    <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Kindergarten programming & robotics education</span>
+                                    <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Led hands-on sessions to spark curiosity through <span class="text-rru-gold italic serif-font">playful engineering</span></h5>
+                                </div>
+                                <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                    <p class="text-lg">Designed and delivered engaging, age-appropriate coding and robotics lessons for 6–8 year olds, emphasizing creative problem-solving through guided projects.</p>
+                                    <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                        <div>
+                                            <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Approach</p>
+                                            <p class="text-xs">Balanced structure with exploration: small-group challenges, live demos, and hands-on builds.</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Outcome</p>
+                                            <p class="text-xs">Empowered young learners to build autonomy and confidence in STEM through fun, achievable goals.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                <div class="relative mb-8">
+                                    <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                        <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                        <i data-lucide="sparkles" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                        <span class="text-3xl font-black serif-font relative z-10">21</span>
+                                        <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Sessions</span>
+                                    </div>
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="leaf" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Zero Dump Initiative</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Environmental Cleanup
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Co-Founder & Vice-President of a community-led nonprofit driving large-scale cleanups and volunteer engagement.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="users" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">1,074 volunteers</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="user-check" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">10 leaders recruited</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="globe" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">3 governorates</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="trash" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">69 cleanups</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="package" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">950+ kg collected</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group">
+                                        <a href="https://eg.linkedin.com/company/zerodumpinitiative?trk=similar-pages" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                            <i data-lucide="linkedin" class="w-4 h-4 text-rru-gold"></i>
+                                        </a>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">LinkedIn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Community-driven environmental action</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Scaling volunteer cleanups with <span class="text-rru-gold italic serif-font">leadership development</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Supervised 1,074 volunteers across three governorates, collaborated with local organizations, and coordinated 69 cleanup events to remove over 950 kg of waste.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Leadership</p>
+                                                <p class="text-xs">Recruited and mentored 10 regional leaders to scale impact and ensure consistent execution.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Partnerships</p>
+                                                <p class="text-xs">Partnered with two community organizations to amplify reach and mobilize resources.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="heart" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">950+</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Kg Collected</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="award" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Zero Boundaries Hackathon</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Global Software & Hardware Hackathon
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Co-Founder, Host & Organizer of a 7‑day hackathon with $65k+ in prizes, connecting developers and makers across 31 countries.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="users" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">215 participants</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="globe" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">31 countries</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="code" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">93 projects</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="user-check" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">14 judges</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="star" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">9 workshops</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="dollar-sign" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">$65k+ prizes</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group">
+                                        <a href="https://zero-boundaries-hackathon.devpost.com/" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                                        </a>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Devpost</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Online software & hardware hackathon</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Organized a global event empowering teams with <span class="text-rru-gold italic serif-font">real prizes & mentorship</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Systematized the event to host 215 participants from 31 countries, curated 93 projects, and brought together 14 judges for a 7-day competition.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Learning</p>
+                                                <p class="text-xs">Ran 3 workshops and supplied mentorship to help teams move from idea to prototype.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Prizes</p>
+                                                <p class="text-xs">Managed $65k+ in awards for top solutions in both software and hardware tracks.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="award" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">$65k+</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">in prizes</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="youtube" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">OpenSource Research</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Educational YouTube Channel
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Co-Founder & Content Writer for an educational channel focused on open-source research and development.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="video" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">18 videos</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="eye" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">12.5k+ views</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="user-check" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">700+ subscribers</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="clock" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">433.8+ hours watched</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="trending-up" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">155.3k+ impressions</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 group">
+                                        <a href="http://www.youtube.com/@OpenSourceResearch" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                            <i data-lucide="youtube" class="w-4 h-4"></i>
+                                        </a>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">YouTube</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Open-source learning & research education</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Creating content that makes open-source research accessible to <span class="text-rru-gold italic serif-font">young developers</span></h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Produced a series of educational videos teaching open-source tools and research methods, building an engaged community of learners.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Reach</p>
+                                                <p class="text-xs">Achieved 155.3k+ impressions and 12.5k+ views while growing an active subscriber base.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Engagement</p>
+                                                <p class="text-xs">Generated 433.8+ watch hours through consistent, high-quality tutorials.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="play" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">155</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">k Impressions</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="award-banner text-white shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                    <div class="flex flex-col lg:flex-row min-h-[520px]">
+                        <div class="lg:w-1/4 glass-sidebar p-10 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                    <i data-lucide="book" class="w-8 h-8 text-rru-gold"></i>
+                                </div>
+                                <h4 class="text-3xl serif-font leading-tight mb-4">Tech Genius Institute</h4>
+                                <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                    Research Senior & Mentor
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <p class="text-[10px] text-white/40 leading-relaxed">
+                                    Research Senior & Mentor, CS Department, Tech Genius Institute — a 3‑month research institute guiding junior teams.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="grid grid-cols-[40px_1fr] items-center gap-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="user-check" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">12 juniors (4 teams)</span>
+                                    </div>
+                                    <div class="grid grid-cols-[40px_1fr] items-center gap-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">5 research papers (7+ per team)</span>
+                                    </div>
+                                    <div class="grid grid-cols-[40px_1fr] items-center gap-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">12+ live sessions</span>
+                                    </div>
+                                    <div class="grid grid-cols-[40px_1fr] items-center gap-3 group cursor-default">
+                                        <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                            <i data-lucide="package" class="w-4 h-4 text-rru-gold"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">50+ publications summarized</span>
+                                    </div>
+                                    <div class="grid grid-cols-[40px_1fr] items-center gap-3 group">
+                                        <a href="https://tgi-institute.vercel.app/" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                                        </a>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Website</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-3/4 p-10 lg:p-16 flex flex-col justify-center relative z-10">
+                            <div class="grid lg:grid-cols-5 gap-12">
+                                <div class="lg:col-span-3 space-y-6">
+                                    <div class="space-y-2">
+                                        <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Research mentorship & publication</span>
+                                        <h5 class="text-4xl md:text-5xl font-bold tracking-tight">Guided junior teams through <span class="text-rru-gold italic serif-font">hands-on research</span> and publication</h5>
+                                    </div>
+                                    <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                    <div class="space-y-6 text-blue-100 font-light leading-relaxed max-w-xl">
+                                        <p class="text-lg">Instructed 12 juniors (4 teams), executed 5 research papers (7+ papers each), and scheduled 12+ live sessions while summarizing 50+ publications.</p>
+                                        <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Mentorship</p>
+                                                <p class="text-xs">Structured research workflows and coached teams through experimental design, analysis, and writing.</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-rru-gold font-bold uppercase text-[9px] mb-2 tracking-widest">Impact</p>
+                                                <p class="text-xs">Enabled junior researchers to publish and present work, broadening the program's academic reach.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                    <div class="relative mb-8">
+                                        <div class="w-40 h-40 bg-white/5 rounded-full border border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
+                                            <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                            <i data-lucide="graduation-cap" class="w-12 h-12 text-rru-gold mb-2 relative z-10"></i>
+                                            <span class="text-3xl font-black serif-font relative z-10">50+</span>
+                                            <span class="text-[8px] uppercase tracking-widest font-bold text-white/40 relative z-10">Publications</span>
+                                        </div>
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/5 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses -->
+    <section id="courses" class="pt-16 pb-32 px-6 bg-white relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center text-center mb-16">
+                <h2 class="text-rru-gold uppercase tracking-[0.4em] text-xs font-bold mb-4">Learning & Growth</h2>
+                <h3 class="text-5xl md:text-6xl serif-font text-rru-blue">Courses & Certifications</h3>
+                <p class="mt-4 text-gray-500 max-w-2xl text-sm leading-relaxed">
+                    Key courses I've completed to deepen my skills in AI, data science, and software engineering.
+                </p>
+            </div>
+
+            <div class="award-banner text-white shadow-2xl">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+                <div class="flex flex-col lg:flex-row min-h-[260px]">
+                    <div class="lg:w-1/4 glass-sidebar p-8 flex flex-col justify-between relative z-10">
+                        <div>
+                            <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/20">
+                                <i data-lucide="book-open" class="w-8 h-8 text-rru-gold"></i>
+                            </div>
+                            <h4 class="text-3xl serif-font leading-tight mb-4">Writing in the Sciences</h4>
+                            <div class="inline-block px-3 py-1 stat-badge rounded-lg text-[10px] font-bold uppercase tracking-widest mb-6">
+                                Stanford Online / Coursera (With Honors)
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <p class="text-[10px] text-white/40 leading-relaxed">
+                                Completed a rigorous writing course from Stanford covering clear scientific communication, peer review, and storytelling for research.
+                            </p>
+                            <div class="grid grid-cols-[40px_1fr] items-center gap-3 group cursor-default">
+                                <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-rru-gold"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Peer-reviewed writing assignments</span>
+                            </div>
+                            <div class="grid grid-cols-[40px_1fr] items-center gap-3 group cursor-default">
+                                <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
+                                    <i data-lucide="clock" class="w-4 h-4 text-rru-gold"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">12 weeks of coursework</span>
+                            </div>
+                            <div class="grid grid-cols-[40px_1fr] items-center gap-3 group">
+                                <a href="https://www.coursera.org/account/accomplishments/certificate/ODQ7FW48HZW8" target="_blank" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-rru-gold transition-all">
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Certificate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:w-3/4 p-8 lg:p-12 flex flex-col justify-center relative z-10">
+                        <div class="grid lg:grid-cols-5 gap-10">
+                            <div class="lg:col-span-3 space-y-4">
+                                <div class="space-y-2">
+                                    <span class="text-rru-gold font-bold uppercase tracking-[0.3em] text-[10px]">Scientific writing & communication</span>
+                                    <h5 class="text-3xl md:text-4xl font-bold tracking-tight">Learned to craft clear, compelling research stories and review scientific manuscripts.</h5>
+                                </div>
+                                <div class="h-1 w-20 bg-rru-gold/30"></div>
+                                <p class="text-blue-100 font-light leading-relaxed max-w-xl">
+                                    Covered principles of concise writing, audience-driven structure, and best practices for peer feedback in scientific contexts.
+                                </p>
+                            </div>
+                            <div class="lg:col-span-2 flex flex-col items-center justify-center text-center">
+                                <div class="relative mb-6">
+                                    <div class="w-36 h-36 bg-white/5 rounded-full border border-white/10 flex items-center justify-center relative overflow-hidden group">
+                                        <div class="absolute inset-0 bg-rru-gold/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>
+                                        <i data-lucide="award" class="w-10 h-10 text-rru-gold relative z-10"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 mt-4 block">Verified Certificate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="hero-gradient text-white relative overflow-hidden">
+        <!-- Decorative background elements -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-rru-gold/5 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-80 h-80 bg-rru-gold/5 rounded-full -ml-40 -mb-40 blur-3xl"></div>
+
+        <!-- Watermark text -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+            <div class="text-9xl font-black serif-font tracking-tight">A. Elnakesh</div>
+        </div>
+
+        <!-- Main Footer Content -->
+        <div class="relative z-10">
+            <!-- CTA Section -->
+            <div class="pt-24 pb-20 px-6">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-5xl md:text-6xl serif-font font-bold mb-6 tracking-tight leading-tight">
+                        Let's work together on <span class="text-rru-gold">impactful</span> projects
+                    </h2>
+                    <p class="text-lg md:text-xl text-blue-100 mb-10 leading-relaxed max-w-3xl mx-auto">
+                        Turning ideas into reality through innovation, leadership, and a passion for creating meaningful change. I'm always excited to collaborate on projects that matter.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+            <!-- Footer Links Section -->
+            <div class="py-12 px-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="grid md:grid-cols-3 gap-12 mb-12">
+                        <!-- Brand -->
+                        <div class="flex flex-col items-center md:items-start">
+                            <div class="w-12 h-12 bg-rru-gold rounded-lg flex items-center justify-center text-rru-blue font-bold text-lg mb-4">AE</div>
+                            <p class="text-sm text-blue-100">Abdelrahman Elnakesh</p>
+                            <p class="text-xs text-white/40 mt-2">Data Analytics & Artificial Intelligence</p>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="flex flex-col items-center">
+                            <h4 class="text-sm font-bold uppercase tracking-widest text-rru-gold mb-4">Navigation</h4>
+                            <div class="space-y-2 text-sm text-blue-100 text-center">
+                                <p><a href="#home" class="hover:text-rru-gold transition-colors">Home</a></p>
+                                <p><a href="#education" class="hover:text-rru-gold transition-colors">Education</a></p>
+                                <p><a href="#projects" class="hover:text-rru-gold transition-colors">Projects</a></p>
+                                <p><a href="#leadership" class="hover:text-rru-gold transition-colors">Leadership</a></p>
+                            </div>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="flex flex-col items-center md:items-end">
+                            <h4 class="text-sm font-bold uppercase tracking-widest text-rru-gold mb-4">Connect</h4>
+                            <div class="space-y-2 text-sm text-blue-100 text-center md:text-right">
+                                <p><a href="mailto:abdelrahmanelnakesh@gmail.com" class="hover:text-rru-gold transition-colors">abdelrahmanelnakesh@gmail.com</a></p>
+                                <div class="flex justify-center md:justify-end space-x-4 mt-4">
+                                    <a href="#" class="w-10 h-10 bg-white/10 border border-white/20 rounded-full flex items-center justify-center hover:bg-rru-gold hover:border-rru-gold transition-all">
+                                        <i data-lucide="github" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="#" class="w-10 h-10 bg-white/10 border border-white/20 rounded-full flex items-center justify-center hover:bg-rru-gold hover:border-rru-gold transition-all">
+                                        <i data-lucide="linkedin" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Copyright -->
+                    <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-[11px] uppercase tracking-widest text-white/40 space-y-4 md:space-y-0">
+                        <span>© 2026 Abdelrahman Elnakesh. All rights reserved.</span>
+                        <span>Designed & Built with passion</span>
+                        <span>Cairo, Egypt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const overlay = document.getElementById('menu-overlay');
+        const openBtn = document.getElementById('open-menu');
+        const closeBtn = document.getElementById('close-menu');
+        const links = document.querySelectorAll('.nav-item a');
+        const dbScrollTrigger = document.getElementById('db-scroll-trigger');
+
+        const openMenu = () => {
+            overlay.classList.add('active');
+            document.querySelector('.floating-nav').style.opacity = '0';
+        };
+        const closeMenu = () => {
+            overlay.classList.remove('active');
+            document.querySelector('.floating-nav').style.opacity = '1';
+        };
+
+        openBtn.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+        links.forEach(link => link.addEventListener('click', closeMenu));
+
+        const fastScrollTo = (target, duration = 400) => {
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+            const startPosition = window.pageYOffset;
+            const distance = targetPosition - startPosition;
+            let startTime = null;
+
+            const animation = (currentTime) => {
+                if (startTime === null) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                const ease = (t, b, c, d) => {
+                    t /= d;
+                    return -c * t * (t - 2) + b;
+                };
+                const run = ease(timeElapsed, startPosition, distance, duration);
+                window.scrollTo(0, run);
+                if (timeElapsed < duration) requestAnimationFrame(animation);
+            };
+            requestAnimationFrame(animation);
+        };
+
+        dbScrollTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetSection = document.getElementById('education');
+            fastScrollTo(targetSection, 400); 
+        });
+
+        const updateNavColor = () => {
+            const btn = document.getElementById('open-menu');
+            const eduSection = document.getElementById('education');
+            const eduTop = eduSection.getBoundingClientRect().top;
+            if (eduTop <= 32) {
+                btn.classList.remove('on-dark');
+                btn.classList.add('on-light');
+            } else {
+                btn.classList.remove('on-light');
+                btn.classList.add('on-dark');
+            }
+        };
+
+        window.addEventListener('scroll', updateNavColor);
+    </script>
+</body>
+</html>
